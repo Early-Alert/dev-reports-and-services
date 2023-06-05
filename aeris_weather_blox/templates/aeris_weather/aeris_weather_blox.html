@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>AerisWeather WeatherBlox</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <link rel="stylesheet" href="https://cdn.aerisapi.com/wxblox/latest/aeris-wxblox.css">
+    <script defer src="https://cdn.aerisapi.com/wxblox/latest/aeris-wxblox.js"></script>
+    <style>
+        .aeris-menu {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .aeris-menu-btn {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .aeris-menu-btn.active {
+            background-color: #2196F3;
+            color: #fff;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!--// target DOM element where WeatherBlox will be rendered //-->
+
+    <!-- position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 10px; -->
+    <div class="col-md-12" style="width: 1000px;  font-family: Open Sans ,Helvetica,Arial,sans-serif; margin: auto; border: 3px solid black; padding: 20px;">
+
+        <div id="search_wxblox" class="aeris-wrapper"></div><br>
+        <!-- <div class="aeris-menu">
+            <button class="aeris-menu-btn active" onclick="getData('default')" data-aeris-menu="forecast">Forecast</button>
+            <button class="aeris-menu-btn" onclick="getData('hourlyforecast')" data-aeris-menu="hourly">Hourly</button>
+            <button class="aeris-menu-btn" onclick="getData('advisories')" data-aeris-menu="advisories">Advisories</button>
+            <button class="aeris-menu-btn" onclick="getData('observation')" data-aeris-menu="today">Today</button>
+            <button class="aeris-menu-btn" data-aeris-menu="history">History</button>
+            <button class="aeris-menu-btn" onclick="getData('calendar')" data-aeris-menu="calendar">Calendar</button>
+            <button class="aeris-menu-btn" data-aeris-menu="dailyobservation">Daily Observation</button>
+            <button class="aeris-menu-btn" onclick="getData('hourlyforecast')" data-aeris-menu="hourlyforecase">Hourly
+                Forecast</button>
+            <button class="aeris-menu-btn" onclick="getData('sunmoon')" data-aeris-menu="sunmoon">Sun/Moon</button>
+            <button class="aeris-menu-btn" onclick="getData('normals')" data-aeris-menu="normals">Normals</button>
+            <button class="aeris-menu-btn" onclick="getData('airquality')" data-aeris-menu="airquality">Air Quality</button>
+            <button class="aeris-menu-btn" data-aeris-menu="maps">Maps</button>
+            <button class="aeris-menu-btn" data-aeris-menu="monthlyobservations">Monthly Observations</button>
+            <button class="aeris-menu-btn" data-aeris-menu="tropical">Tropical</button>
+        </div> -->
+        <div class="aeris-menu">
+            <button class="aeris-menu-btn active" onclick="getData('default')"
+                data-aeris-menu="forecast">Forecast</button>
+            <button class="aeris-menu-btn" onclick="getData('hourlyforecast')" data-aeris-menu="hourly">Hourly</button>
+            <button class="aeris-menu-btn" onclick="getData('advisories')"
+                data-aeris-menu="advisoriesmap">Advisories</button>
+            <button class="aeris-menu-btn" onclick="getData('today')" data-aeris-menu="today">Today</button>
+            <button class="aeris-menu-btn" onclick="getData('history')" data-aeris-menu="history">History</button>
+            <button class="aeris-menu-btn" onclick="getData('calendar')" data-aeris-menu="calendar">Calendar</button>
+            <button class="aeris-menu-btn" onclick="getData('sunmoon')" data-aeris-menu="sunmoon">Sun/Moon</button>
+            <button class="aeris-menu-btn" onclick="getData('normals')" data-aeris-menu="normals">Normals</button>
+            <button class="aeris-menu-btn" onclick="getData('airquality')" data-aeris-menu="airquality">Air
+                Quality</button>
+        </div>
+        <div id="wxblox" class="aeris-wrapper"></div>
+    </div>
+
+    <script>
+        city = 'minneapolis'
+        state = 'mn'
+        window.onload = () => {
+            // set Aeris account access keys
+            getData()
+        };
+        var view;
+        var aeris;
+        function getData(section = 'default') {
+            document.getElementById("search_wxblox").innerHTML = ''
+            document.getElementById("wxblox").innerHTML = ''
+            aeris = new AerisWeather('IJwChrr7utrp6BFWVnJ1A', 'WmzZHc1PnJiAsr996tFNwfsPt7IqetRHHuB8Ldty');
+
+            aeris.on('ready', () => {
+
+                const search_view = new aeris.wxblox.views.PlaceSearch('#search_wxblox', {
+                    autoselect: true,
+                    searchOnChange: true,
+                    request: {filter: 'poi'}
+                });
+                search_view.on('select', function (e) {
+                    var p = e.data.place;
+                    state = p.place.country.toLowerCase();
+                    if (p.place.state) {
+                        state = p.place.state.toLowerCase();
+                    }
+                    city = p.place.name.toLowerCase();
+                    getData(city, state)
+                    // window.location.href = url;
+                });
+                // load data and render the view for a specific location
+                search_view.load();
+
+                view = loadView(section)
+                // create desired WeatherBlox instance
+
+                // load data and render the view for a specific location
+                view.load({
+                    p: city + ',' + state
+                });
+
+            });
+        }
+
+        function loadView(section) {
+            switch (section) {
+                case 'advisories':
+                    return new aeris.wxblox.layouts.local.Advisories('#wxblox');
+                case 'hourlyforecast':
+                    var today = new Date(); // Get the current date and time
+                    var formattedDate = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear(); // Format the date as MM/DD/YYYY
+                    return new aeris.wxblox.layouts.local.HourlyForecast('#wxblox', {
+                        data: {
+                            range: {
+                                from: formattedDate,
+                                to: formattedDate
+                            }
+                        },
+                        show: {
+                            links: true
+                        }
+                    });
+                case 'airquality':
+                    return new aeris.wxblox.layouts.local.AirQuality('#wxblox');
+                    break;
+                case 'sunmoon':
+                    var today = new Date(); // Get the current date
+                    var tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1); // Get the date for tomorrow
+
+                    var formattedToday = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear(); // Format today's date as MM/DD/YYYY
+                    var formattedTomorrow = (tomorrow.getMonth() + 1) + '/' + tomorrow.getDate() + '/' + tomorrow.getFullYear(); // Format tomorrow's date as MM/DD/YYYY
+
+                    return new aeris.wxblox.layouts.local.SunMoon('#wxblox', {
+                        data: {
+                            range: {
+                                from: formattedToday, // Use today's date as the 'from' value
+                                to: formattedTomorrow // Use tomorrow's date as the 'to' value
+                            }
+                        }
+                    });
+                    break;
+                case 'calendar':
+                    var today = new Date(); // Get the current date and time
+                    var formattedDate = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear(); // Format the date as MM/DD/YYYY
+                    return new aeris.wxblox.layouts.local.Calendar('#wxblox', {
+                        data: {
+                            range: {
+                                from: formattedDate
+                            }
+                        },
+                        show: {
+                            links: true
+                        }
+                    });
+                case 'observation':
+                    return new aeris.wxblox.views.ArchiveObservations('#wxblox', {
+                        range: {
+                            from: "05/02/2023",
+                            to: "05/03/2023"
+                        },
+                        show: {
+                            title: true
+                        }
+                    });
+                case 'normals':
+                    var today = new Date(); // Get the current date
+                    var tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1); // Get the date for tomorrow
+
+                    var formattedToday = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear(); // Format today's date as MM/DD/YYYY
+                    var formattedTomorrow = (tomorrow.getMonth() + 1) + '/' + tomorrow.getDate() + '/' + tomorrow.getFullYear(); // Format tomorrow's date as MM/DD/YYYY
+
+                    return new aeris.wxblox.layouts.local.Normals('#wxblox', {
+                        data: {
+                            range: {
+                                from: formattedToday, // Use today's date as the 'from' value
+                                to: formattedTomorrow // Use tomorrow's date as the 'to' value
+                            }
+                        }
+                    });
+                    break;
+                case 'today':
+                    var today = new Date(); // Get the current date and time
+                    var formattedDate = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear(); // Format the date as MM/DD/YYYY
+                    return new aeris.wxblox.layouts.local.DailyObservations('#wxblox', {
+                        data: {
+                            range: {
+                                from: formattedDate,
+                                to: formattedDate
+                            }
+                        },
+                        show: {
+                            links: true
+                        }
+                    });
+                case 'history':
+                    var today = new Date(); // Get the current date and time
+                    var formattedDate = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear(); // Format the date as MM/DD/YYYY
+                    return new aeris.wxblox.layouts.local.MonthlyObservations('#wxblox', {
+                        data: {
+                            range: {
+                                from: formattedDate,
+                                to: formattedDate
+                            }
+                        }
+                    });
+
+                default:
+                    return new aeris.wxblox.layouts.local.Main('#wxblox', {
+                        obs: {
+                            advisories: {
+                                enabled: true
+                            },
+                            threats: {
+                                enabled: true
+                            }
+                        },
+                        nearby: {
+                            request: {
+                                limit: 4
+                            }
+                        },
+                        shortterm: {
+                            request: {
+                                limit: 3
+                            }
+                        },
+                        forecast: {
+                            type: "detailed"
+                        },
+                        maps: {
+                            animation: {
+                                enabled: true,
+                                autoplay: false,
+                                alwaysShowPast: false,
+                                alwaysShowFuture: false,
+                                from: -7200,
+                                to: 0,
+                                duration: 2,
+                                endDelay: 1,
+                                intervals: 10
+                            },
+                            controls: {
+                                layers: [{
+                                    value: "radar",
+                                    title: "Radar"
+                                }, {
+                                    value: "satellite",
+                                    title: "Satellite"
+                                }, {
+                                    value: "alerts",
+                                    title: "Advisories"
+                                }, {
+                                    value: "temperatures,clip-us-flat",
+                                    title: "Temps"
+                                }],
+                                regions: [{
+                                    zoom: 7,
+                                    title: "Local"
+                                }, {
+                                    zoom: 5,
+                                    title: "Regional"
+                                }]
+                            }
+                        }
+                    });
+                    break;
+
+            }
+        }
+
+        var menuButtons = document.querySelectorAll(".aeris-menu-btn");
+        var aerisContent = document.querySelectorAll(".aeris-content");
+
+        menuButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                var menu = this.getAttribute("data-aeris-menu");
+
+                menuButtons.forEach(function (btn) {
+                    btn.classList.remove("active");
+                });
+                this.classList.add("active");
+
+                aerisContent.forEach(function (content) {
+                    content.style.display = "none";
+                    if (content.getAttribute("data-aeris-content") == menu) {
+                        content.style.display = "block";
+                    }
+                });
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

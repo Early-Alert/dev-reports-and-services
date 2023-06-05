@@ -1,0 +1,180 @@
+{% load my_custom_filters %}
+<html>
+
+<head>
+    <title>Short Fused Alert Template</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<body>
+    <div align="center">
+        <table style="height: 100px; width: 1200px;" align="center" border="1px">
+            <tbody>
+                <tr>
+                    <td><img src="https://eapytoolsstorage.blob.core.windows.net/media/CFA.png" alt="clientlogo"
+                            width="150" height="150"></td>
+                    <td><img src="https://eapytoolsstorage.blob.core.windows.net/media/Red_SFA_Header.png"
+                            alt="sfa background" width="1030" height="150"></td>
+                </tr>
+            </tbody>
+        </table>
+        <table align="center" border="0" cellpadding="0" cellspacing="0"
+            style="width: 1200px; background-color: #CD1945; margin-bottom: 10px;">
+            <tbody>
+                <tr>
+                    <th colspan="0" style="padding: 0.1in 15pt 3.0pt; vertical-align: top;">
+                        <p style="text-align: center;">
+                            <span style="font-size: 26px; font-family: sans-serif; color: black;"><strong>Chick-fil-A NWS
+                                    Summary</strong></span>
+                        </p>
+                    </th>
+                </tr>
+                <tr>
+                    <td colspan="0" style="padding: 0.1in 15pt 1.0pt;">
+                        <p
+                            style="margin: 0in 0in 0.0001pt; font-size: 20px; font-family: sans-serif; text-align: center;">
+                            <span style="color: black;"><strong>Issued:</strong></span>
+                            <span style="color: black;"><strong>{{issue_date}}</strong></span>
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- <div style="width: 820px;"> -->
+        {% for table1 in data %}
+        {% if table1.data %}
+        <table width="1200" align="center" style="border-collapse: collapse; border: 2px solid; margin-bottom: 10px;">
+            <tr>
+                <th
+                    style="width:810px; text-align: center; background-color: yellow; color: black; font-weight: bold; font-family: Ubuntu; font-size: 20px;">
+                    {{ table1.type }}
+                </th>
+            </tr>
+            {% for table in table1.data %}
+            <tr>
+                <table width="1200" align="center" style="margin-bottom: 10px; border: 1px solid black;">
+                    <tr>
+                        <td style="border: 1px solid black; text-align: center; background-color: #ea9999; color: black; border-bottom: 2px solid; font-weight: bold; font-family: Ubuntu; font-size: 16px;" colspan="3">
+                            <h3 style="line-height: 20px; margin: 0;">{{ table.title }}</h3>
+                            <p style="font-size:20px; line-height: 20px; margin: 0;">{{ table.created_at|date:"Y-m-d"|upper }} {{ table.created_at|uppercase_ampm }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table style="border: 1px solid black; width:1200px; background-color: white;">
+                                <thead>
+                                    <tr style="border: 1px solid black">
+                                        <th style="padding: 5px; font-size: 16px; font-weight: bold; text-align: center; background: #a20f0f; color:white;">Number</th>
+                                        <th style="padding: 5px; font-size: 16px; font-weight: bold; text-align: center; background: #a20f0f; color:white;">Locations</th>
+                                        <th style="padding: 5px; font-size: 16px; font-weight: bold; text-align: center; background: #a20f0f; color:white;">City</th>
+                                        <th style="padding: 5px; font-size: 16px; font-weight: bold; text-align: center; background: #a20f0f; color:white;">State</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for location in table.locations_affected %}
+                                    <tr style="border: 1px solid black">
+                                        <td style="padding: 5px; background: #c9c7bf; font-size: 14px; font-weight: bold; text-align: center; color: #000; ">{{ forloop.counter }}</td>
+                                        <td style="padding: 5px; background: #c9c7bf; font-size: 14px; font-weight: bold; text-align: center; color: #000; ">{{ location.name }}</td>
+                                        <td style="padding: 5px; background: #c9c7bf; font-size: 14px; font-weight: bold; text-align: center; color: #000; ">{{ location.city }}</td>
+                                        <td style="padding: 5px; background: #c9c7bf; font-size: 14px; font-weight: bold; text-align: center; color: #000; ">{{ location.state }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        {% endfor %}
+
+        <!-- </div> -->
+        <div align="center">
+            <table width="1200" align="center" border="0" cellpadding="0" cellspacing="0" style="width: 1200; background-color: rgb(54, 54, 54); vertical-align: top;">
+                <tbody>
+                    <tr>
+                        <td style="color: rgb(153, 153, 153); padding-left: 5px; width: 60%;">
+                            <p style="margin-bottom: 0.0001pt; text-align: left; padding-top: 10px; padding-left: 10px;">
+                                <span style="font-size: 11px; font-family: sans-serif;">
+                                    This &quot;Short Fuse Alert&quot; is an automated email Advisory, Watch, or Warning, issued, in part, by the National Weather Service, USGS or Environment Canada (Canada Weather Service), for a local weather hazard, civil matter or seismic event of relatively short duration. Short Fuse Alerts are typically issued for a specific location to allow for localized protective actions by on-site management, supervisors or applicable operational personnel. Due to the uncertainty and chaotic nature of this situation, it is recommended that this report and content be used for preparedness and/or planning purposes only and not verbatim or a precise expectation.<br />
+                                    <br />
+ The information contained in this mail transmission is privileged and confidential. If you are not the intended recipient, nor the employee or agent responsible for delivering it to the intended recipient, you are hereby notified that any dissemination or copying of this transmission (including any attachments) is strictly prohibited. If you have received this email in error, please notify the sender by email reply. Thank you.<br />
+                                    <br />
+ Early Alert, Inc. All rights reserved. This article is protected by United States copyright and other intellectual property laws may not be reproduced, rewritten, distributed, re-disseminated, transmitted, displayed, published or broadcast, directly or indirectly, in any medium without the prior written permission of Early Alert Inc.<br />
+                                    <br />
+ 
+                                    Copyright Â© 2023 Early Alert, Inc. All rights reserved.<br />
+                                    <br />
+                                </span>
+ 
+                                <span><a href="https://www.earlyalert.com/" style="color: rgb(223, 223, 223); text-decoration: underline; font-size: 11px; font-family: sans-serif;">www.EarlyAlert.com</a></span>
+                                <br />
+                                <br />
+                                <span><a href="https://www.earlyalert.com/subscribing/" style="color: white; text-decoration: underline; font-size: 12px; font-family: sans-serif;" alt=sub></a></span>
+                            
+                                <span><a href="https://www.earlyalert.com/unsub/" style="color: white; text-decoration: underline; font-size: 12px; font-family: sans-serif;" alt=unsub></a></span>
+                            </p>
+ 
+                            <p style="margin: 5px 5px 15px 5px; font-size: 11px; font-family: sans-serif; text-align: left; line-height: 13.5pt; vertical-align: top;">
+                                <br />
+ 
+                                <a href="https://www.linkedin.com/company/early-alert-inc." style="color: white; text-decoration: underline; float: left;">
+                                    <img
+                                        border="0"
+                                        width="42"
+                                        height="42"
+                                        src="https://maps.earlyalert.com/portal/sharing/rest/content/items/84c42228c7304d70b15a54dfb07f7c50/data"
+                                        alt="linkedin"
+                                    />
+                                </a>
+ 
+                                <a href="https://vimeo.com/user26947804" style="color: blue; text-decoration: underline;">
+                                    <img border="0" width="42" height="42" src="https://gis-earlyalert.maps.arcgis.com/sharing/rest/content/items/58f02d495d9049c294374af49c0ce4e2/data" alt="vimeo" />
+                                </a>
+                            </p>
+                        </td> 
+                        <td style="width:30%; padding: 15px 20px 20px; vertical-align: top;">
+                            <p align="right" style="margin-bottom: 0.0001pt; padding-right: 5pt; font-size: 11px; font-family: sans-serif; color: white; text-align: right; vertical-align: top;">
+                                <a href="www.earlyalert.com" style="color: black; text-decoration: none;" title="%20https:/www.earlyalert.com">
+                                    <img border="0" width="200" height="70" src="https://eabroadcaster.earlyalert.com/files/ealogo%20white.png" alt="earlyalert">
+                                </a>
+                                <br />
+                                <br />
+
+                                <span style="color: white; text-decoration: none; text-align: right;">877-932-5378</span><br />
+                                <br />
+ 
+                                <a href="mailto:alerts@earlyalert.com" style="color: white; text-decoration: underline; text-align: right;">
+                                    <span style="color: white; text-decoration: none; text-align: right;">alerts@earlyalert.com</span>
+                                </a>
+                            </p>
+ 
+                            <p style="margin-right: 0in; margin-bottom: 3.75pt;margin-left:0in; padding-right: 5px; text-align: right; line-height: 13.5pt; font-size: 11px; font-family: sans-serif; vertical-align: top;">
+                                <a href="https://earlyalert.com/" style="text-decoration: underline; color: white;">EarlyAlert.com</a><br />
+                                <a href="https://earlyalertcemp.com/" style="text-decoration: underline; color: white;">EarlyAlertCEMP.com</a>
+                            </p>
+ 
+                            <br />
+ 
+                            <p style="margin-top: 3.5; text-align: right; font-family: sans-serif; font-size: 11px; color: white; vertical-align: top;"><strong>Addition support can be found at:&nbsp;</strong></p>
+ 
+                            <p style="margin: -0.1in 0in 0pt; font-size: 11px; font-family: sans-serif; text-align: right; color: white; line-height: 20px; padding-right: 5px; vertical-align: top;">
+                                <a href="https://tornadoalert.com/" style="color: white; text-decoration: underline;">TornadoAlert.com</a>
+                            </p>
+ 
+                            <p style="margin: 0in 0in 0pt; font-size: 11px; font-family: sans-serif; text-align: right; color: white; line-height: 20px; padding-right: 5px; vertical-align: top;">
+                                <a href="https://tornadodector.us/" style="color: white; text-decoration: underline;" title="https://tornadodector.us">TornadoDetector.us</a>
+                            </p>
+ 
+                            <p style="margin: 0in 0in 0pt; font-size: 11px; font-family: sans-serif; text-align: right; color: white; line-height: 20px; padding-right: 5px; vertical-align: top;">
+                                <a href="https://tornadooracle.com/" style="color: white; text-decoration: underline;" title="https://tornadooracle.com">TornadoOracle.com</a>
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+</body>
+
+</html>

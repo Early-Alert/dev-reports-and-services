@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>AerisWeather WeatherBlox</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <link rel="stylesheet" href="https://cdn.aerisapi.com/wxblox/latest/aeris-wxblox.css">
+    <script defer src="https://cdn.aerisapi.com/wxblox/latest/aeris-wxblox.js"></script>
+
+</head>
+<body>
+
+    <!--// target DOM element where WeatherBlox will be rendered //-->
+    <div id="wxblox" class="aeris-wrapper"></div>
+
+    <script>
+    window.onload = () => {
+        // set Aeris account access keys
+        const aeris = new AerisWeather('IJwChrr7utrp6BFWVnJ1A', 'WmzZHc1PnJiAsr996tFNwfsPt7IqetRHHuB8Ldty');
+
+        aeris.on('ready', () => {
+
+            // create desired WeatherBlox instance
+            const view = new aeris.wxblox.layouts.local.Advisories('#wxblox', {
+                advisories: {
+                    fullDetails: true,
+                    showModal: true
+                }
+            });
+
+            // load data and render the view for a specific location
+            view.load({
+                p: "minneapolis,mn"
+            });
+            
+        });
+    };
+    </script>
+
+</body>
+</html>
